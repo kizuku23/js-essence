@@ -1,7 +1,5 @@
 window.name = 'John';
 
-
-
 const person = {
     name: 'Tom',
     hello() {
