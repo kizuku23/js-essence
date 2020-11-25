@@ -18,16 +18,20 @@ function reactive(target) {
 
 let activeEffect = null;
 function effect(fn) {
-  activeEffect = fn;
-  activeEffect();
-  activeEffect = null;
+  try {
+    activeEffect = fn;
+    activeEffect();
+    return activeEffect;
+  } finally {
+    activeEffect = null;
+  }
 }
 
 const targetMap = new WeakMap();
 function track(target, key) {
-  if(activeEffect === null) {
+  if (activeEffect === null) {
     return;
-  } 
+  }
   let depsMap = targetMap.get(target);
 
   if (!depsMap) {
@@ -51,9 +55,23 @@ function trigger(target, key) {
     return;
   }
   const deps = depsMap.get(key);
-  if(!deps) {
+  if (!deps) {
     return;
   }
   deps.forEach(effect => effect());
 }
-export { effect, trigger, reactive };
+
+function computed(getter) {
+  let computed;
+  const runner = effect(getter);
+
+  computed = {
+    get value() {
+      const value = runner();
+      console.log('%c[computed:refresh]', 'background: purple; color: white;', value);
+      return value;
+    }
+  }
+  return computed;
+}
+export { effect, trigger, reactive, computed };
