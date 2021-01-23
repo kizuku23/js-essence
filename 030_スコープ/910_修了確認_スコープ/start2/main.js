@@ -47,6 +47,7 @@ fn2();
  * increment(); // 期待値->4
  */
 
+
  function incrementFactory() {
 
     let num = 0;
